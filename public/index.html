@@ -3,33 +3,150 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title> Laboratorio de Auditoría de Código Seguro</title>
+  <!-- CORRECCIÓN: Content Security Policy — bloquea scripts externos e inline -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; script-src 'self'; style-src 'self'">
+  <title>TechFix - Soluciones de Tecnología (Versión Segura)</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Laboratorio de Auditoría de Código Seguro</h1>
-    
-    <div class="alert alert-info">
-      ⚠️ Vulnerabilidades Intencionales
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo">TechFix</div>
+      <ul class="nav-links">
+        <li><a href="#home">Inicio</a></li>
+        <li><a href="#about">Acerca de</a></li>
+        <li><a href="#services">Servicios</a></li>
+        <li><a href="#contact">Contacto</a></li>
+        <li><a href="#login" class="login-btn">Ingresar</a></li>
+      </ul>
     </div>
+  </nav>
 
-    <h2>📝 Login</h2>
-    <div class="form-group">
-      <input type="text" id="username" placeholder="Usuario" autocomplete="off">
-      <input type="password" id="password" placeholder="Contraseña">
-      <button onclick="login()">Iniciar Sesión</button>
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-content">
+      <h1>Bienvenido a TechFix</h1>
+      <p>Soluciones innovadoras de tecnología para tu negocio</p>
+      <button class="btn btn-primary">Conoce Más</button>
     </div>
+  </section>
 
-    <h2>👥 Gestión de Usuarios</h2>
-    <div class="button-group">
-      <button onclick="getUsers()">Ver Usuarios</button>
-      <button onclick="saveUser()">Guardar Usuario</button>
+  <!-- About Section -->
+  <section class="about" id="about">
+    <div class="container">
+      <h2>Acerca de TechFix</h2>
+      <p>
+        TechFix es una empresa líder en soluciones de tecnología con más de 10 años 
+        de experiencia. Ofrecemos servicios de consultoría, desarrollo y mantenimiento 
+        de sistemas para empresas de todos los tamaños.
+      </p>
+      <div class="stats">
+        <div class="stat">
+          <h3>500+</h3>
+          <p>Clientes Activos</p>
+        </div>
+        <div class="stat">
+          <h3>1000+</h3>
+          <p>Proyectos Completados</p>
+        </div>
+        <div class="stat">
+          <h3>10+</h3>
+          <p>Años de Experiencia</p>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <h2>🔍 Resultados</h2>
-    <div id="output"></div>
-  </div>
+  <!-- Services Section -->
+  <section class="services" id="services">
+    <div class="container">
+      <h2>Nuestros Servicios</h2>
+      <div class="service-grid">
+        <div class="service-card">
+          <h3>Consultoría Tecnológica</h3>
+          <p>Asesoramiento experto para transformar tu negocio digitalmente</p>
+        </div>
+        <div class="service-card">
+          <h3>Desarrollo de Software</h3>
+          <p>Aplicaciones personalizadas adaptadas a tus necesidades</p>
+        </div>
+        <div class="service-card">
+          <h3>Seguridad Informática</h3>
+          <p>Protege tu infraestructura contra amenazas cibernéticas</p>
+        </div>
+        <div class="service-card">
+          <h3>Soporte Técnico 24/7</h3>
+          <p>Equipo disponible para resolver tus problemas en cualquier momento</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Login Section -->
+  <section class="login-section" id="login">
+    <div class="container login-container">
+      <h2>Portal de Acceso</h2>
+      <div class="login-form">
+        <form>
+          <div class="form-group">
+            <label for="username">Usuario:</label>
+            <input type="text" id="username" placeholder="Ingresa tu usuario" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="password">Contraseña:</label>
+            <!-- CORRECCIÓN: autocomplete="current-password" para gestores de contraseñas -->
+            <input type="password" id="password" placeholder="Ingresa tu contraseña"
+                   autocomplete="current-password">
+          </div>
+          <button type="button" class="btn btn-primary" onclick="login()">Iniciar Sesión</button>
+          <button type="button" class="btn" onclick="logout()">Cerrar Sesión</button>
+        </form>
+        <!-- CORRECCIÓN V3 (XSS): este div solo se escribe con textContent, nunca innerHTML -->
+        <div id="login-output" class="output"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Sección de administración: visible solo tras login con rol admin -->
+  <section id="admin-section" style="display:none;" class="login-section">
+    <div class="container login-container">
+      <h2>Panel de Administración</h2>
+      <div class="button-group">
+        <button class="btn btn-primary" onclick="getUsers()">Ver Usuarios</button>
+        <button class="btn btn-primary" onclick="saveUser()">Agregar Usuario</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <h2>Contacto</h2>
+      <div class="contact-info">
+        <div class="info-item">
+          <h3>📍 Dirección</h3>
+          <p>Calle Principal 123, Ciudad, País</p>
+        </div>
+        <div class="info-item">
+          <h3>📞 Teléfono</h3>
+          <p>+1 (555) 123-4567</p>
+        </div>
+        <div class="info-item">
+          <h3>📧 Email</h3>
+          <p>info@techfix.local</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 TechFix. Todos los derechos reservados.</p>
+    </div>
+  </footer>
 
   <script src="app.js"></script>
 </body>

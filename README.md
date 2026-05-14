@@ -1,237 +1,128 @@
-# 🔐 Secure Audit Lab - Laboratorio de Auditoría de Seguridad
+# TechFix Secure Secrets Lab
 
-**Desarrollo de Software Seguro**  
-**Facultad de Telemática - Universidad de Colima**  
-**Docente: Rodrigo Ramírez**  
+**Carrera:** Ingeniería en Sistemas
+**Materia:** Desarrollo de Software Seguro
+**Práctica:** Gestión de Secretos y Configuración Segura
+**Estudiante:** Jose Daniel Zumarraga
+**Docente:** Rodrigo Ramírez
 
 ---
 
-## 📖 Descripción
+## Descripción
 
-En esta materia de Desarrollo de Software Seguro, te presento este laboratorio educativo que contiene **vulnerabilidades intencionales**. Tu misión es practicar la identificación, análisis y mitigación de riesgos de seguridad en aplicaciones web reales.
+Laboratorio práctico de auditoría de seguridad web. La aplicación TechFix fue desarrollada con vulnerabilidades intencionales para identificarlas, documentarlas y corregirlas aplicando buenas prácticas de desarrollo seguro.
 
-A través de este proyecto, desarrollarás competencias críticas en:
-- Identificación de vulnerabilidades OWASP Top 10
-- Análisis de riesgos de seguridad
-- Propuesta de soluciones de remediación
-- Documentación profesional de auditorías
-- Implementación de prácticas seguras de desarrollo
+---
 
-## 📋 Estructura del Proyecto
+## Tecnologías
 
-```
-secure-audit-lab/
-├── server.js              # Backend vulnerable (Express)
-├── package.json           # Dependencias
+- Node.js + Express.js
+- PostgreSQL (bcrypt con cost 12 via pgcrypto)
+- JWT (jsonwebtoken)
+- Helmet.js (cabeceras HTTP de seguridad)
+- dotenv (gestión de secretos)
+
+---
+
+## Estructura del proyecto
+
+```text
+practica-de-laboratorio/
+├── server.js                 ← servidor con vulnerabilidades corregidas
+├── .env                      ← secretos (excluido del repo)
+├── .env.example              ← plantilla de variables de entorno
+├── .gitignore
+├── package.json
+├── postgres_setup.sql        ← esquema y datos de prueba
+│
+├── config/
+│   └── database.js           ← pool de conexión PostgreSQL
+│
 ├── public/
-│   ├── index.html        # Interfaz de usuario
-│   ├── app.js            # Lógica del cliente (vulnerable)
-│   └── styles.css        # Estilos
-├── data/
-│   └── users.json        # Base de datos simulada
+│   ├── index.html            ← interfaz de usuario
+│   ├── app.js                ← lógica del cliente
+│   └── styles.css
+│
 └── logs/
-    ├── connections.log   # Registro de conexiones
-    └── activity.log      # Registro de actividades
+    ├── connections.log       ← generado en tiempo de ejecución
+    └── activity.log          ← generado en tiempo de ejecución
 ```
-
-## 🚀 Instalación y Uso
-
-### 1. Instalar dependencias
-```bash
-npm install
-```
-
-### 2. Iniciar el servidor
-```bash
-npm start
-```
-
-### 3. Acceder a la aplicación
-- URL: `http://localhost:3000`
-- El servidor registrará todas las conexiones en `logs/connections.log`
-
-## 📊 Sistema de Logging
-
-El servidor registra automáticamente:
-
-### **connections.log**
-- Todas las conexiones HTTP
-- IP del cliente
-- Método (GET, POST, etc.)
-- URL accedida
-- User-Agent del navegador
-- Timestamp
-
-**Ubicación:** `./logs/connections.log`
-
-### **activity.log**
-- Intentos de login
-- Lecturas de usuarios
-- Acceso a admin
-- Errores
-- Cualquier acción crítica
-
-**Ubicación:** `./logs/activity.log`
-
-## 🔴 Vulnerabilidades Intencionales
-
-### VULNERABILIDAD 1: SQL Injection (Simulada)
-**Ubicación:** `/login` (GET)
-```javascript
-// VULNERABLE: Compara directamente sin sanitizar
-const user = users.find(u => u.username == username && u.password == password);
-```
-**Problema:** Usa `==` en lugar de `===`, no valida entrada
-**Impacto:** Posible bypass de autenticación
-
-### VULNERABILIDAD 2: Exposición de Datos Sensibles
-**Ubicación:** `/users` (GET)
-```javascript
-res.json(users); // Expone TODAS las contraseñas en texto plano
-```
-**Problema:** Sin autenticación, devuelve todas las credenciales
-**Impacto:** Información Disclosure, compromiso de cuentas
-
-### VULNERABILIDAD 3: Escritura Insegura en Archivo
-**Ubicación:** `/save` (POST)
-```javascript
-fs.appendFileSync('./data/users.json', JSON.stringify(data));
-```
-**Problemas:**
-- Corrompe el JSON al hacer append
-- No valida entrada
-- Sin protección de acceso
-- Permite inyección de datos arbitrarios
-
-### VULNERABILIDAD 4: Manejo Deficiente de Errores
-**Ubicación:** `/error` (GET)
-```javascript
-throw new Error("Error interno del servidor");
-```
-**Problema:** Expone stack trace completo a clientes
-**Impacto:** Information Disclosure
-
-### VULNERABILIDAD 5: XSS (Cross-Site Scripting)
-**Ubicación:** `public/app.js` - función `login()`
-```javascript
-document.getElementById('output').innerHTML = data; // Sin sanitizar
-```
-**Problema:** Inserta HTML directamente sin validar
-**Impacto:** Ejecución de código malicioso en navegador
-
-### VULNERABILIDAD 6: Missing Authentication
-**Ubicación:** `/admin/stats` (GET)
-- Endpoint administrativo sin autenticación
-- Expone información sensible del sistema
-
-### VULNERABILIDAD 7: Path Traversal
-**Ubicación:** `/logs/:file` (GET)
-```javascript
-fs.readFileSync(path.join(logsDir, file), 'utf-8');
-```
-**Problema:** Podría permitir acceso a archivos fuera de `/logs`
-**Impacto:** Lectura no autorizada de archivos
-
-## 📝 Fases del Laboratorio
-
-### FASE 1: Identificación
-- [ ] Ejecutar la aplicación
-- [ ] Revisar los logs generados
-- [ ] Detectar vulnerabilidades en backend y frontend
-- [ ] Clasificarlas (XSS, SQL Injection, etc.)
-
-### FASE 2: Análisis
-- [ ] Documentar cada vulnerabilidad
-- [ ] Explicar el impacto de seguridad
-- [ ] Proporcionar evidencia (request/response)
-- [ ] Clasificar por severidad (CVSS)
-
-### FASE 3: Mitigación
-- [ ] Proponer soluciones específicas
-- [ ] Hash de contraseñas (bcrypt)
-- [ ] Sanitización de inputs
-- [ ] Validación en cliente y servidor
-- [ ] Manejo seguro de errores
-- [ ] Autenticación y autorización
-
-### FASE 4: Entregable
-- [ ] Reporte técnico con:
-  - Lista de vulnerabilidades encontradas
-  - Evidencia con capturas/logs
-  - Recomendaciones de remediación
-  - Mini plan de acción prioritario
-  - Código corregido (opcionales)
-
-## 🔗 Endpoints Disponibles
-
-| Endpoint | Método | Descripción | Vulnerabilidades |
-|----------|--------|-------------|------------------|
-| `/` | GET | Página principal | XSS |
-| `/login` | GET | Autenticación | SQL Injection simulada |
-| `/users` | GET | Listar usuarios | Información Disclosure |
-| `/save` | POST | Guardar usuario | Validación insegura, corrupción de datos |
-| `/error` | GET | Trigger error | Error Handling deficiente |
-| `/admin/stats` | GET | Estadísticas admin | Missing Authentication |
-| `/logs/:file` | GET | Leer logs | Path Traversal potencial |
-
-## 📊 Monitoreo de Estudiantes
-
-Los logs permiten ver exactamente qué estudiantes accedieron y qué hicieron:
-
-```bash
-# Ver todas las conexiones
-cat logs/connections.log
-
-# Ver actividades específicas
-grep "LOGIN_ATTEMPT" logs/activity.log
-
-# Monitorear acceso en tiempo real
-tail -f logs/connections.log
-```
-
-## 💡 Ejemplo de Uso Seguro
-
-Para referencia, aquí hay ejemplos de código seguro:
-
-### Login Seguro
-```javascript
-// Usar bcrypt para hash
-const bcrypt = require('bcrypt');
-const user = users.find(u => u.username === username); // === en lugar de ==
-if (user && await bcrypt.compare(password, user.passwordHash)) {
-    // Generar token JWT
-}
-```
-
-### Sanitización de XSS
-```javascript
-// Usar textContent en lugar de innerHTML
-document.getElementById('output').textContent = data;
-// O sanitizar con DOMPurify
-document.getElementById('output').innerHTML = DOMPurify.sanitize(data);
-```
-
-### Validación de Input
-```javascript
-// Validar en servidor
-if (!username || typeof username !== 'string' || username.length > 50) {
-    return res.status(400).json({ error: 'Invalid input' });
-}
-```
-
-## 📚 Recursos Adicionales
-
-- [OWASP Top 10](https://owasp.org/www-project-top-ten/)
-- [CWE Top 25](https://cwe.mitre.org/top25/)
-- [OWASP Testing Guide](https://owasp.org/www-project-web-security-testing-guide/)
-
-## ⚠️ Disclaimer
-
-Este proyecto contiene vulnerabilidades intencionales **SOLO** para propósitos educativos. 
-**NUNCA** desplegar código similar en producción. 
-Este código es exclusivamente para aprendizaje en entorno controlado.
 
 ---
 
-**Última actualización:** 29 de Abril de 2026
-**Versión:** 1.0.0
+## Inicio rápido
+
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar variables de entorno
+cp .env.example .env
+# Editar .env con los valores reales
+
+# 3. Ejecutar el script SQL en PostgreSQL
+psql -U postgres -f postgres_setup.sql
+
+# 4. Iniciar el servidor
+node server.js
+```
+
+El servidor queda disponible en `http://localhost:3000`.
+
+Credenciales de prueba:
+
+| Usuario | Contraseña         | Rol   |
+|---------|--------------------|-------|
+| admin   | Admin@TechFix2024! | admin |
+| alice   | UserPass@2024      | user  |
+| bob     | UserPass@2024      | user  |
+
+---
+
+## Vulnerabilidades identificadas y corregidas
+
+### V1 — Exposición de Datos Sensibles
+
+**Clasificación:** OWASP A02:2021 — Cryptographic Failures
+**Severidad:** Crítica
+**Endpoint:** `GET /users`
+
+**Problema:** El endpoint no requería autenticación y devolvía `password_hash` de todos los usuarios directamente al cliente.
+
+**Corrección:** Autenticación JWT obligatoria mediante middleware. El `SELECT` excluye `password_hash` de la respuesta.
+
+---
+
+### V2 — Manejo Deficiente de Errores
+
+**Clasificación:** OWASP A09:2021 — Security Logging and Monitoring Failures
+**Severidad:** Media
+**Endpoint:** `GET /error`
+
+**Problema:** El servidor exponía el stack trace completo, rutas del sistema de archivos y nombres de módulos directamente al cliente en la respuesta JSON.
+
+**Corrección:** Respuesta genérica al cliente con un `errorId` para trazabilidad interna. El detalle del error solo queda en los logs del servidor.
+
+---
+
+### V3 — Missing Authentication
+
+**Clasificación:** OWASP A01:2021 — Broken Access Control
+**Severidad:** Crítica
+**Endpoint:** `GET /admin/stats`
+
+**Problema:** El endpoint administrativo no implementaba autenticación ni validación de roles. Devolvía información privilegiada (host de BD, versión de Node.js) sin verificar la identidad del cliente.
+
+**Corrección:** Middleware `authMiddleware` + `requireRole('admin')`. La respuesta solo incluye métricas estadísticas sin datos internos del sistema.
+
+---
+
+### V4 — Path Traversal
+
+**Clasificación:** OWASP A01:2021 — Broken Access Control
+**Severidad:** Crítica
+**Endpoint:** `GET /logs/:file`
+
+**Problema:** El parámetro `:file` se usaba sin validación, permitiendo secuencias `../` para navegar fuera del directorio `/logs` y leer archivos arbitrarios del sistema (`.env`, `server.js`, etc.).
+
+**Corrección:** `path.basename()` elimina cualquier componente de directorio. Whitelist explícita de archivos permitidos. Requiere JWT con rol admin.
